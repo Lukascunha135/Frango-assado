@@ -1,90 +1,68 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const faturarBtn = document.getElementById('faturarBtn');
-    const atualizarBtn = document.getElementById('atualizarBtn');
-    const quantidadeInput = document.getElementById('quantidade');
+// script.js
+
+document.addEventListener('DOMContentLoaded', () => {
     const contadorFrangos = document.getElementById('contadorFrangos');
+    const faturarBtn = document.getElementById('faturarBtn');
+    const quantidadeInput = document.getElementById('quantidade');
+    const quantidadeLinguicaInput = document.getElementById('quantidadeLinguica');
+    const linguicaCheckbox = document.getElementById('linguicaCheckbox');
+    const linguicaInfo = document.getElementById('linguicaInfo');
     const precoFrangoInput = document.getElementById('precoFrango');
+    const precoLinguicaInput = document.getElementById('precoLinguica');
     const totalFrangosInput = document.getElementById('totalFrangos');
+    const atualizarBtn = document.getElementById('atualizarBtn');
     const recibo = document.getElementById('recibo');
     const reciboContent = document.getElementById('reciboContent');
     const reciboValor = document.getElementById('reciboValor');
     const reciboData = document.getElementById('reciboData');
-    const linguicaCheckbox = document.getElementById('linguicaCheckbox');
-    const linguiçaContainer = document.getElementById('linguicaContainer');
-    const quantidadeLinguicaInput = document.getElementById('quantidadeLinguica');
 
-    // Carregar dados do localStorage
-    const frangosDisponiveis = localStorage.getItem('frangosDisponiveis');
-    const precoFrango = localStorage.getItem('precoFrango');
-
-    // Se existir um valor salvo, atualiza os elementos na página
-    if (frangosDisponiveis) {
-        contadorFrangos.textContent = frangosDisponiveis;
-        totalFrangosInput.value = frangosDisponiveis;
-    }
-    
-    // Se existir um preço salvo, atualiza o campo de preço
-    if (precoFrango) {
-        precoFrangoInput.value = precoFrango;
-    }
-
-    // Exibir ou ocultar o campo de linguiça
-    linguicaCheckbox.addEventListener('change', function() {
-        linguiçaContainer.style.display = linguicaCheckbox.checked ? 'block' : 'none';
+    // Mostra ou esconde informações da linguiça
+    linguicaCheckbox.addEventListener('change', () => {
+        linguicaInfo.style.display = linguicaCheckbox.checked ? 'block' : 'none';
     });
 
-    faturarBtn.addEventListener('click', function() {
+    faturarBtn.addEventListener('click', () => {
         const quantidade = parseInt(quantidadeInput.value);
-        const totalFrangos = parseInt(contadorFrangos.textContent);
         const quantidadeLinguica = parseInt(quantidadeLinguicaInput.value);
         const precoFrango = parseFloat(precoFrangoInput.value);
+        const precoLinguica = linguicaCheckbox.checked ? parseFloat(precoLinguicaInput.value) : 0;
 
-        // Verifica se a quantidade de frangos e linguiças está correta
-        if (quantidade > 0 && quantidade <= totalFrangos && quantidadeLinguica >= 0) {
-            // Atualiza a contagem de frangos disponíveis
-            const novosFrangos = totalFrangos - quantidade;
-            contadorFrangos.textContent = novosFrangos;
+        // Não cobrar uma linguiça se a quantidadeLinguica for maior que zero
+        const quantidadeCobrarLinguica = Math.max(0, quantidadeLinguica - 1); // Não permitir negativo
 
-            // Salva a nova quantidade de frangos no localStorage
-            localStorage.setItem('frangosDisponiveis', novosFrangos);
+        // Calcula o total
+        const total = (quantidade * precoFrango) + (quantidadeCobrarLinguica * precoLinguica);
+        
+        // Atualiza o contador de frangos
+        const frangosDisponiveis = parseInt(contadorFrangos.innerText);
+        contadorFrangos.innerText = Math.max(0, frangosDisponiveis - quantidade); // Não permitir negativo
 
-            // Gera o conteúdo do recibo
-            reciboContent.innerHTML = `Frangos: ${quantidade}<br>`;
-            if (quantidadeLinguica > 0) {
-                reciboContent.innerHTML += `Linguiças: ${quantidadeLinguica}<br>`;
-            }
+        // Atualiza o recibo
+        reciboContent.innerText = `Você comprou ${quantidade} frango(s) e 
+${quantidadeLinguica} linguiça(s).`;
+        reciboValor.innerText = `Total a pagar: R$ ${total.toFixed(2)}`;
+        reciboData.innerText = new Date().toLocaleDateString();
 
-            // Calcula e exibe o valor total dos frangos
-            const valorTotal = quantidade * precoFrango;
-            reciboValor.innerHTML = `Valor: R$ ${valorTotal.toFixed(2)}`;
+        // Exibe o recibo
+        recibo.style.display = 'block';
 
-            // Define a data de hoje
-            const dataHoje = new Date();
-            reciboData.innerHTML = dataHoje.toLocaleDateString('pt-BR');
-
-            // Mostra o recibo
-            recibo.style.display = 'block';
-
-            // Imprime somente o recibo
+        // Chama a função de impressão automaticamente
+        setTimeout(() => {
             window.print();
-        } else {
-            alert('Quantidade inválida.');
-        }
+        }, 500); // Aguarda meio segundo para garantir que o recibo seja renderizado
     });
 
-    atualizarBtn.addEventListener('click', function() {
-        const novoPreco = parseFloat(precoFrangoInput.value);
-        const novoTotalFrangos = parseInt(totalFrangosInput.value);
-        
-        if (novoPreco > 0 && novoTotalFrangos >= 0) {
-            precoFrangoInput.value = novoPreco;
-            contadorFrangos.textContent = novoTotalFrangos;
-
-            // Salva o novo preço e a nova quantidade de frangos no localStorage
-            localStorage.setItem('precoFrango', novoPreco);
-            localStorage.setItem('frangosDisponiveis', novoTotalFrangos);
-        } else {
-            alert('Por favor, insira valores válidos.');
-        }
+    atualizarBtn.addEventListener('click', () => {
+        const totalFrangos = parseInt(totalFrangosInput.value);
+        contadorFrangos.innerText = totalFrangos;
     });
 });
+
+// Função para imprimir o recibo
+function imprimirRecibo() {
+    // Exibe o recibo e prepara para impressão
+    const recibo = document.getElementById('recibo');
+    recibo.style.display = 'block';
+    window.print();
+    recibo.style.display = 'none'; // Esconde o recibo após a impressão
+}
