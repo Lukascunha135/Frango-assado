@@ -11,36 +11,44 @@
         <h1>Estação do Frango</h1>
     </header>
 
-<!-- Novo título "Frangos assados a serem vendido" -->
-            <p class="frangos-disponiveis">Frangos assados a serem vendido: <span id="contadorFrangos">10</span></p>
+    <p class="frangos-disponiveis">Frangos assados a serem vendidos: <span id="contadorFrangos">10</span></p>
 
     <div class="container">
-        <section class="settings-section">
+        <section class="control-section">
             <h2>Configurações</h2>
-            <label for="precoFrango">Preço do Frango: R$</label>
+            <label for="precoFrango">Preço do Frango (R$):</label>
             <input type="number" id="precoFrango" value="10" step="0.01">
             
-            <label for="totalFrangos">Total de Frangos:</label>
+            <label for="totalFrangos">Total de Frangos Disponíveis:</label>
             <input type="number" id="totalFrangos" value="10">
             <button id="atualizarBtn" class="btn">Atualizar</button>
         </section>
 
         <section class="order-section">
             <h2>Faturamento</h2>
-            <label for="quantidade">Quantidade a Faturar:</label>
+            <label for="quantidade">Quantidade de Frangos a Faturar:</label>
             <input type="number" id="quantidade" min="1" value="1">
+            
+            <!-- Opção de Linguiça -->
+            <label for="linguicaCheckbox">
+                <input type="checkbox" id="linguicaCheckbox"> Tem linguiça?
+            </label>
+            <div id="linguicaContainer" style="display: none;">
+                <label for="quantidadeLinguica">Quantidade de Linguiças:</label>
+                <input type="number" id="quantidadeLinguica" min="0" value="0">
+            </div>
+            
             <button id="faturarBtn" class="btn faturar-btn">Faturar</button>
         </section>
-        
-        <div id="recibo" class="recibo" style="display: none;">
-            <h2>Ticket Estação do Frango</h2>
 
+        <section id="recibo" class="recibo" style="display: none;">
+            <h2>Vale frango</h2>
+<h2>Estação do Frango</h2>
             <p id="reciboContent"></p>
-            <p>Ticket válido hoje: <span id="reciboData"></span></p>
-    
- </h2>Bom Almoço</h2> 
-
-  </div>
+            <p id="reciboValor"></p>
+            <p>vale válido até: <span id="reciboData"></span></p>
+          <h2>BOM ALMOÇO!</h2>
+        </section>
     </div>
 
     <footer class="footer">
