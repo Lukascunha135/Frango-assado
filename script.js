@@ -16,6 +16,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const reciboValor = document.getElementById('reciboValor');
     const reciboData = document.getElementById('reciboData');
 
+    // Carregar valores do localStorage
+    function carregarValores() {
+        const quantidadeFrangosSalvos = localStorage.getItem('quantidadeFrangos') || 0;
+        const precoFrangoSalvo = localStorage.getItem('precoFrango') || 0;
+
+        contadorFrangos.innerText = quantidadeFrangosSalvos;
+        precoFrangoInput.value = precoFrangoSalvo;
+    }
+
+    // Salvar valores no localStorage
+    function salvarValores() {
+        const quantidadeFrangos = parseInt(contadorFrangos.innerText);
+        const precoFrango = parseFloat(precoFrangoInput.value);
+
+        localStorage.setItem('quantidadeFrangos', quantidadeFrangos);
+        localStorage.setItem('precoFrango', precoFrango);
+    }
+
+    // Chama a função para carregar os valores ao iniciar
+    carregarValores();
+
     // Mostra ou esconde informações da linguiça
     linguicaCheckbox.addEventListener('change', () => {
         linguicaInfo.style.display = linguicaCheckbox.checked ? 'block' : 'none';
@@ -38,8 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
         contadorFrangos.innerText = Math.max(0, frangosDisponiveis - quantidade); // Não permitir negativo
 
         // Atualiza o recibo
-        reciboContent.innerText = `Você comprou ${quantidade} frango(s) e 
-${quantidadeLinguica} linguiça(s).`;
+        reciboContent.innerText = `Você comprou ${quantidade} frango(s) e ${quantidadeLinguica} linguiça(s).`;
         reciboValor.innerText = `Total a pagar: R$ ${total.toFixed(2)}`;
         reciboData.innerText = new Date().toLocaleDateString();
 
@@ -49,20 +69,17 @@ ${quantidadeLinguica} linguiça(s).`;
         // Chama a função de impressão automaticamente
         setTimeout(() => {
             window.print();
+            // Esconde o recibo após a impressão
+            recibo.style.display = 'none'; 
         }, 500); // Aguarda meio segundo para garantir que o recibo seja renderizado
+
+        // Salva os valores atualizados
+        salvarValores();
     });
 
     atualizarBtn.addEventListener('click', () => {
         const totalFrangos = parseInt(totalFrangosInput.value);
         contadorFrangos.innerText = totalFrangos;
+        salvarValores(); // Salva a quantidade atualizada
     });
 });
-
-// Função para imprimir o recibo
-function imprimirRecibo() {
-    // Exibe o recibo e prepara para impressão
-    const recibo = document.getElementById('recibo');
-    recibo.style.display = 'block';
-    window.print();
-    recibo.style.display = 'none'; // Esconde o recibo após a impressão
-}
