@@ -94,7 +94,6 @@ input[type="number"] {
     text-align: left;
 }
 
-/* Estilos do rodapé */
 .footer {
     margin-top: 20px;
     padding: 10px;
@@ -105,19 +104,18 @@ input[type="number"] {
     font-size: 0.9rem;
 }
 
-/* Estilos de impressão */
 @media print {
     body * {
-        visibility: hidden; /* Oculta tudo na página */
+        visibility: hidden;
     }
-    .recibo, .recibo * {
-        visibility: visible; /* Mostra apenas o recibo */
+    #recibo, #recibo * {
+        visibility: visible;
     }
-    .recibo {
-        position: absolute; /* Remove o recibo do fluxo normal da página */
-        top: 0; /* Alinha ao topo */
-        left: 0; /* Alinha à esquerda */
-        width: 100%; /* Largura total para impressão */
-        color: black; /* Cor do texto */
+    #recibo {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        color: black;
     }
 }
