@@ -10,9 +10,9 @@
     <header class="header">
         <h1>Estação do Frango</h1>
     </header>
-
-    <p class="frangos-disponiveis">Frangos assados a serem vendidos: <span id="contadorFrangos">10</span></p>
-
+<div class="container">
+    <p class="frangos-disponiveis">Frangos assados disponíveis: <span id="contadorFrangos">10</span></p>
+</div>
     <div class="container">
         <section class="control-section">
             <h2>Configurações</h2>
@@ -23,7 +23,8 @@
             <input type="number" id="totalFrangos" value="10">
             <button id="atualizarBtn" class="btn">Atualizar</button>
         </section>
-
+</div>
+         <div class="container">
         <section class="order-section">
             <h2>Faturamento</h2>
             <label for="quantidade">Quantidade de Frangos a Faturar:</label>
@@ -42,7 +43,7 @@
         </section>
 
         <section id="recibo" class="recibo" style="display: none;">
-            <h2>Vale frango</h2>
+            <h2>Vale Frango</h2>
 <h2>Estação do Frango</h2>
             <p id="reciboContent"></p>
             <p id="reciboValor"></p>
