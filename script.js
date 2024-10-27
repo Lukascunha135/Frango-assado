@@ -7,20 +7,38 @@ document.addEventListener('DOMContentLoaded', function() {
     const totalFrangosInput = document.getElementById('totalFrangos');
     const recibo = document.getElementById('recibo');
     const reciboContent = document.getElementById('reciboContent');
+    const reciboValor = document.getElementById('reciboValor');
     const reciboData = document.getElementById('reciboData');
+    const linguicaCheckbox = document.getElementById('linguicaCheckbox');
+    const linguiçaContainer = document.getElementById('linguicaContainer');
+    const quantidadeLinguicaInput = document.getElementById('quantidadeLinguica');
+
+    // Exibir ou ocultar o campo de linguiça
+    linguicaCheckbox.addEventListener('change', function() {
+        linguiçaContainer.style.display = linguicaCheckbox.checked ? 'block' : 'none';
+    });
 
     faturarBtn.addEventListener('click', function() {
         const quantidade = parseInt(quantidadeInput.value);
         const totalFrangos = parseInt(contadorFrangos.textContent);
+        const quantidadeLinguica = parseInt(quantidadeLinguicaInput.value);
         const precoFrango = parseFloat(precoFrangoInput.value);
-        
-        if (quantidade > 0 && quantidade <= totalFrangos) {
+
+        // Verifica se a quantidade de frangos e linguiças está correta
+        if (quantidade > 0 && quantidade <= totalFrangos && quantidadeLinguica >= 0) {
             // Atualiza a contagem de frangos disponíveis
             contadorFrangos.textContent = totalFrangos - quantidade;
 
             // Gera o conteúdo do recibo
-            reciboContent.innerHTML = `Quantidade: ${quantidade}<br>Total: R$ ${(quantidade * precoFrango).toFixed(2)}`;
-            
+            reciboContent.innerHTML = `Frangos: ${quantidade}<br>`;
+            if (quantidadeLinguica > 0) {
+                reciboContent.innerHTML += `Linguiças: ${quantidadeLinguica}<br>`;
+            }
+
+            // Calcula e exibe o valor total dos frangos
+            const valorTotal = quantidade * precoFrango;
+            reciboValor.innerHTML = `Valor: R$ ${valorTotal.toFixed(2)}`;
+
             // Define a data de hoje
             const dataHoje = new Date();
             reciboData.innerHTML = dataHoje.toLocaleDateString('pt-BR');
