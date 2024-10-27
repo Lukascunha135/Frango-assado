@@ -1,0 +1,121 @@
+/* style.css */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: #f4f4f9;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+.header {
+    width: 100%;
+    padding: 20px;
+    background-color: #e74c3c;
+    color: #fff;
+    text-align: center;
+}
+
+.header h1 {
+    font-size: 2rem;
+}
+
+.container {
+    background-color: #fff;
+    width: 90%;
+    max-width: 500px;
+    margin: 20px;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+h2 {
+    color: #34495e;
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    color: #666;
+    margin: 10px 0 5px;
+    text-align: left;
+}
+
+input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 15px;
+}
+
+/* Estilo para "Frangos Disponíveis" */
+.frangos-disponiveis {
+    font-size: 1.2rem;
+    color: #e74c3c;
+    font-weight: bold;
+    margin-top: 15px;
+}
+
+.btn {
+    background-color: #3498db;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.faturar-btn {
+    background-color: #e74c3c;
+}
+
+.btn:hover {
+    background-color: #2980b9;
+}
+
+.recibo {
+    margin-top: 20px;
+    padding: 15px;
+    border: 2px dashed #2980b9;
+    color: #333;
+    font-size: 1rem;
+    text-align: left;
+}
+
+.footer {
+    margin-top: 20px;
+    padding: 10px;
+    width: 100%;
+    background-color: #34495e;
+    color: #fff;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    #recibo, #recibo * {
+        visibility: visible;
+    }
+    #recibo {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        color: black;
+    }
+}
