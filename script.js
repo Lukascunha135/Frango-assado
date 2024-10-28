@@ -1,5 +1,3 @@
-// script.js
-
 document.addEventListener('DOMContentLoaded', () => {
     const contadorFrangos = document.getElementById('contadorFrangos');
     const faturarBtn = document.getElementById('faturarBtn');
@@ -69,8 +67,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Chama a função de impressão automaticamente
         setTimeout(() => {
             window.print();
-            // Esconde o recibo após a impressão
-            recibo.style.display = 'none'; 
+            // Remova a linha abaixo para evitar ocultar o recibo após a impressão
+            // recibo.style.display = 'none';
         }, 500); // Aguarda meio segundo para garantir que o recibo seja renderizado
 
         // Salva os valores atualizados
