@@ -61,11 +61,11 @@ document.addEventListener('DOMContentLoaded', () => {
         // Calcula quantas linguiças precisam ser cobradas
         let quantidadeCobrarLinguica;
         if (linguicaCheckbox.checked) {
-            // Se o checkbox estiver marcado, cobra apenas as linguiças adicionais (acima das gratuitas)
+            // Checkbox marcado: cobra apenas as linguiças adicionais (acima das gratuitas)
             quantidadeCobrarLinguica = Math.max(0, quantidadeLinguica - linguiçasGrátis);
         } else {
-            // Se o checkbox estiver desmarcado, ainda aplica a quantidade grátis
-            quantidadeCobrarLinguica = Math.max(0, quantidadeLinguica - linguiçasGrátis);
+            // Checkbox desmarcado: cobra todas as linguiças
+            quantidadeCobrarLinguica = quantidadeLinguica;
         }
 
         // Calcula o total
