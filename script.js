@@ -72,7 +72,12 @@ document.addEventListener('DOMContentLoaded', () => {
         let reciboText = `Você comprou 
 ${quantidade} frango(s)
 e ${quantidadeLinguica} linguiça(s).`;
-        
+
+        // Inclui informações sobre linguiças grátis
+        if (quantidade > 0) {
+            reciboText += `<br>Você ganhou ${linguiçasGrátis} linguiça(s) grátis.`;
+        }
+
         // Sempre verifica se o checkbox de reserva está selecionado
         if (reservaCheckbox.checked) {
             const nomeReserva = nomeReservaInput.value.trim() || "Não especificado";
