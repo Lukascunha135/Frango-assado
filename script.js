@@ -66,7 +66,8 @@ document.addEventListener('DOMContentLoaded', () => {
         contadorFrangos.innerText = Math.max(0, frangosDisponiveis - quantidade); // Não permitir negativo
 
         // Atualiza o recibo
-        let reciboText = `Você comprou ${quantidade} frango(s) e ${quantidadeLinguica} linguiça(s).`;
+        let reciboText = `Você comprou ${quantidade} frango(s) 
+    e ${quantidadeLinguica} linguiça(s).`;
         
         // Sempre verifica se o checkbox de reserva está selecionado
         if (reservaCheckbox.checked) {
