@@ -20,8 +20,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Carregar valores do localStorage
     function carregarValores() {
-        const quantidadeFrangosSalvos = localStorage.getItem('quantidadeFrangos') || 0;
-        const precoFrangoSalvo = localStorage.getItem('precoFrango') || 0;
+        const quantidadeFrangosSalvos = localStorage.getItem('quantidadeFrangos') || 10;
+        const precoFrangoSalvo = localStorage.getItem('precoFrango') || 10;
 
         contadorFrangos.innerText = quantidadeFrangosSalvos;
         precoFrangoInput.value = precoFrangoSalvo;
