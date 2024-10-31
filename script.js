@@ -57,7 +57,8 @@ document.addEventListener('DOMContentLoaded', () => {
         contadorFrangos.innerText = Math.max(0, frangosDisponiveis - quantidade); // Não permitir negativo
 
         // Atualiza o recibo
-        reciboContent.innerText = `Você comprou ${quantidade} frango
+        reciboContent.innerText = `Você comprou 
+        ${quantidade} frango
 e ${quantidadeLinguica} linguiça.`;
         reciboValor.innerText = `Total a pagar: R$ ${total.toFixed(2)}`;
         reciboData.innerText = new Date().toLocaleDateString();
