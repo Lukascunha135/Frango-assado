@@ -55,9 +55,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const precoFrango = parseFloat(precoFrangoInput.value);
         const precoLinguica = parseFloat(precoLinguicaInput.value); // Sempre pega o preço da linguiça
 
-        // Cada frango dá direito a uma linguiça grátis
-        const linguiçasGrátis = quantidade; // Linguiças grátis
-
         // Calcula quantas linguiças precisam ser pagas
         let quantidadeCobrarLinguica;
         if (linguicaCheckbox.checked) {
