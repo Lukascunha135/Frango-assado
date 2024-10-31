@@ -53,13 +53,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const quantidade = parseInt(quantidadeInput.value);
         const quantidadeLinguica = parseInt(quantidadeLinguicaInput.value);
         const precoFrango = parseFloat(precoFrangoInput.value);
-        const precoLinguica = linguicaCheckbox.checked ? parseFloat(precoLinguicaInput.value) : 0;
+        const precoLinguica = parseFloat(precoLinguicaInput.value); // Sempre pega o preço da linguiça
 
-        // Calcula a quantidade de linguiças grátis com base na quantidade de frangos
-        const linguiçasGrátis = quantidade; // Cada frango dá direito a 1 linguiça grátis
+        // Cada frango dá direito a uma linguiça grátis
+        const linguiçasGrátis = quantidade; // Linguiças grátis
 
-        // Se a quantidade de linguiças for maior que as grátis, cobra as adicionais
-        const quantidadeCobrarLinguica = Math.max(0, quantidadeLinguica - linguiçasGrátis); // Não permitir negativo
+        // Calcula quantas linguiças precisam ser pagas
+        let quantidadeCobrarLinguica;
+        if (linguicaCheckbox.checked) {
+            quantidadeCobrarLinguica = Math.max(0, quantidadeLinguica - linguiçasGrátis); // Cobrar apenas as adicionais
+        } else {
+            quantidadeCobrarLinguica = quantidadeLinguica; // Cobra todas as linguiças se o checkbox não estiver marcado
+        }
 
         // Calcula o total
         const total = (quantidade * precoFrango) + (quantidadeCobrarLinguica * precoLinguica);
