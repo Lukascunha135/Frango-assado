@@ -97,15 +97,38 @@ input[type="number"] {
     background-color: #2980b9;
 }
 
-.recibo {
+/* Estilo do recibo */
+#recibo {
+    display: none;
+    border: 2px solid #333;
+    padding: 20px;
     margin-top: 20px;
-    padding: 15px;
-    border: 2px dashed #2980b9;
-    color: #333;
-    font-size: 1rem;
-    text-align: left;
+    background-color: #f9f9f9;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
 }
 
+#reciboContent {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+#reciboValor {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #007bff;
+    margin-bottom: 10px;
+}
+
+#reciboData {
+    font-size: 1.2em;
+    color: #555;
+}
+
+/* Estilo do rodapé */
 .footer {
     margin-top: 20px;
     padding: 10px;
@@ -116,6 +139,7 @@ input[type="number"] {
     font-size: 0.9rem;
 }
 
+/* Estilo de impressão para o recibo */
 @media print {
     body * {
         visibility: hidden;
