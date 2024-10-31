@@ -14,6 +14,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const reciboValor = document.getElementById('reciboValor');
     const reciboData = document.getElementById('reciboData');
 
+    // Elementos para reserva
+    const reservaCheckbox = document.getElementById('reservaCheckbox');
+    const nomeReservaInput = document.getElementById('nomeReserva');
+
     // Carregar valores do localStorage
     function carregarValores() {
         const quantidadeFrangosSalvos = localStorage.getItem('quantidadeFrangos') || 0;
@@ -40,6 +44,11 @@ document.addEventListener('DOMContentLoaded', () => {
         linguicaInfo.style.display = linguicaCheckbox.checked ? 'block' : 'none';
     });
 
+    // Mostra ou esconde o campo de nome da reserva
+    reservaCheckbox.addEventListener('change', () => {
+        nomeReservaInput.style.display = reservaCheckbox.checked ? 'block' : 'none';
+    });
+
     faturarBtn.addEventListener('click', () => {
         const quantidade = parseInt(quantidadeInput.value);
         const quantidadeLinguica = parseInt(quantidadeLinguicaInput.value);
@@ -57,9 +66,15 @@ document.addEventListener('DOMContentLoaded', () => {
         contadorFrangos.innerText = Math.max(0, frangosDisponiveis - quantidade); // Não permitir negativo
 
         // Atualiza o recibo
-        reciboContent.innerText = `Você comprou,
- ${quantidade} frango
-e ${quantidadeLinguica} linguiça.`;
+        let reciboText = `Você comprou ${quantidade} frango(s) e ${quantidadeLinguica} linguiça(s).`;
+        
+        // Sempre verifica se o checkbox de reserva está selecionado
+        if (reservaCheckbox.checked) {
+            const nomeReserva = nomeReservaInput.value.trim() || "Não especificado";
+            reciboText += `<br>Reserva: ${nomeReserva}`;
+        }
+        
+        reciboContent.innerHTML = reciboText;
         reciboValor.innerText = `Total a pagar: R$ ${total.toFixed(2)}`;
         reciboData.innerText = new Date().toLocaleDateString();
 
@@ -69,8 +84,6 @@ e ${quantidadeLinguica} linguiça.`;
         // Chama a função de impressão automaticamente
         setTimeout(() => {
             window.print();
-            // Remova a linha abaixo para evitar ocultar o recibo após a impressão
-            // recibo.style.display = 'none';
         }, 500); // Aguarda meio segundo para garantir que o recibo seja renderizado
 
         // Salva os valores atualizados
