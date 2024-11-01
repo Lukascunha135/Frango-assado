@@ -77,8 +77,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Atualiza o recibo
         let reciboText = `Você comprou 
-${quantidade} frango(s)
-e ${quantidadeLinguica} linguiça(s).`;
+${quantidade} frango
+e ${quantidadeLinguica} linguiça.`;
 
         // Sempre verifica se o checkbox de reserva está selecionado
         if (reservaCheckbox.checked) {
