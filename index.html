@@ -23,14 +23,13 @@
             <label for="quantidade">Quantidade de Frangos a Faturar:</label>
             <input type="number" id="quantidade" min="1" value="1">
             
-            <label for="quantidadeLinguica">Quantidade de Linguiças a Faturar:</label>
-            <input type="number" id="quantidadeLinguica" min="0" value="1">
-
-            <label for="linguicaCheckbox">
-                <input type="checkbox" id="linguicaCheckbox"> Cobrar linguiças?
+            <label for="temAdicionalCheckbox">
+                <input type="checkbox" id="temAdicionalCheckbox"> Adicionar linguiças adicionais?
             </label>
 
             <div id="linguicaInfo" style="display: none;">
+                <label for="quantidadeLinguica">Quantidade de Linguiças Adicionais:</label>
+                <input type="number" id="quantidadeLinguica" min="0" value="0">
                 <label for="precoLinguica">Valor da Linguiça (R$):</label>
                 <input type="number" id="precoLinguica" min="0" value="2" step="0.01">
             </div>
@@ -56,18 +55,133 @@
         </section>
     </div>
 
+    <!-- Modelo do Recibo -->
     <section id="recibo" class="recibo" style="display: none;">
-        <h2>Estação do Frango</h2>
-        <p id="reciboContent"></p>
-        <p id="reciboValor"></p>
-        <h2>Vale válido até: <span id="reciboData"></span></h2>
-        <h2>BOM ALMOÇO!</h2>
+        <div class="recibo-header">
+            
+        </div>
+        <div id="reciboContent" class="recibo-content"></div>
+        <div class="recibo-footer">
+            <p id="reciboValor" class="recibo-valor"></p>
+        </div>
     </section>
 
     <footer class="footer">
-        <p>&copy; 2024 Lukas Antunes. Todos os direitos reservados.</p>
+        <p>&copy; 2024 Estação do Frango. Todos os direitos reservados.</p>
     </footer>
 
-    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const contadorFrangos = document.getElementById('contadorFrangos');
+            const faturarBtn = document.getElementById('faturarBtn');
+            const quantidadeInput = document.getElementById('quantidade');
+            const temAdicionalCheckbox = document.getElementById('temAdicionalCheckbox');
+            const linguicaInfo = document.getElementById('linguicaInfo');
+            const precoFrangoInput = document.getElementById('precoFrango');
+            const precoLinguicaInput = document.getElementById('precoLinguica');
+            const quantidadeLinguicaInput = document.getElementById('quantidadeLinguica');
+            const totalFrangosInput = document.getElementById('totalFrangos');
+            const atualizarBtn = document.getElementById('atualizarBtn');
+            const recibo = document.getElementById('recibo');
+            const reciboContent = document.getElementById('reciboContent');
+            const reciboValor = document.getElementById('reciboValor');
+            const reservaCheckbox = document.getElementById('reservaCheckbox');
+            const nomeReservaInput = document.getElementById('nomeReserva');
+
+            // Carregar dados salvos do localStorage
+            const frangosSalvos = localStorage.getItem('totalFrangos');
+            const valorFaturadoSalvo = localStorage.getItem('valorFaturado');
+
+            if (frangosSalvos) {
+                contadorFrangos.innerText = frangosSalvos;
+            }
+            
+            if (valorFaturadoSalvo) {
+                reciboValor.innerText = `Total a pagar: R$ ${valorFaturadoSalvo}`;
+            }
+
+            // Mostrar/Esconder informações de linguiça
+            temAdicionalCheckbox.addEventListener('change', () => {
+                linguicaInfo.style.display = temAdicionalCheckbox.checked ? 'block' : 'none';
+            });
+
+            // Mostrar/Esconder campo de nome de reserva
+            reservaCheckbox.addEventListener('change', () => {
+                nomeReservaInput.style.display = reservaCheckbox.checked ? 'block' : 'none';
+            });
+
+            faturarBtn.addEventListener('click', () => {
+                const quantidadeFrangos = parseInt(quantidadeInput.value) || 0;
+                const precoFrango = parseFloat(precoFrangoInput.value);
+                const precoLinguica = parseFloat(precoLinguicaInput.value);
+
+                // Cada frango dá direito a uma linguiça grátis
+                const linguicasGratis = quantidadeFrangos;
+
+                // Verifica a quantidade adicional de linguiças, se o checkbox estiver marcado
+                let quantidadeLinguicaAdicional = 0;
+                let totalLinguicaCobrar = 0;
+                let linguicasAdicionaisTexto = "";
+
+                if (temAdicionalCheckbox.checked) {
+                    const quantidadeLinguica = parseInt(quantidadeLinguicaInput.value) || 0;
+                    // Quantidade de linguiças adicionais que serão cobradas
+                    quantidadeLinguicaAdicional = quantidadeLinguica;
+                    totalLinguicaCobrar = quantidadeLinguicaAdicional * precoLinguica;
+;
+                }
+
+                // Total de linguiças: gratuitas + adicionais
+                const totalLinguicas = linguicasGratis + quantidadeLinguicaAdicional;
+
+                // Calcula o total
+                const total = (quantidadeFrangos * precoFrango) + totalLinguicaCobrar;
+
+                // Atualiza o contador de frangos
+                const frangosDisponiveis = parseInt(contadorFrangos.innerText);
+                contadorFrangos.innerText = Math.max(0, frangosDisponiveis - quantidadeFrangos); // Não permitir quantidade negativa
+
+                // Salvar quantidade de frangos e valor faturado no localStorage
+                localStorage.setItem('totalFrangos', contadorFrangos.innerText);
+                localStorage.setItem('valorFaturado', total.toFixed(2));
+
+                // Gera um número de recibo único para dificultar falsificação
+                const numeroRecibo = Date.now().toString().slice(-6);
+
+                // Atualiza o recibo
+                let reciboText = `<strong>Estação do Frango</strong><br>Bom Almoço!<br>`;
+                
+                if (reservaCheckbox.checked && nomeReservaInput.value) {
+                    reciboText += `Reservado para: ${nomeReservaInput.value}<br>`;
+                }
+
+                reciboText += `${quantidadeFrangos} Frango Assado<br>`;
+                reciboText += `ㅤㅤㅤ${totalLinguicas} linguiça ㅤㅤㅤㅤㅤㅤㅤㅤ${quantidadeFrangos} saquinho de farofa<br>`;
+                if (quantidadeLinguicaAdicional > 0) {
+                    reciboText += linguicasAdicionaisTexto + `<br>`;
+                }
+                reciboText += `ID: ${numeroRecibo}<br>`;
+                reciboText += `Vencimento do recibo: ${new Date().toLocaleDateString()}`;
+
+                reciboContent.innerHTML = reciboText;
+                reciboValor.innerText = `Total a pagar: R$ ${total.toFixed(2)}`;
+
+                // Exibe o recibo
+                recibo.style.display = 'block';
+
+                // Chama a função de impressão automaticamente
+                setTimeout(() => {
+                    window.print();
+                }, 500); // Aguarda meio segundo para garantir que o recibo seja renderizado
+            });
+
+            atualizarBtn.addEventListener('click', () => {
+                // Atualiza a quantidade de frangos no estoque
+                const novoTotalFrangos = parseInt(totalFrangosInput.value);
+                contadorFrangos.innerText = novoTotalFrangos;
+                localStorage.setItem('totalFrangos', novoTotalFrangos);
+            });
+        });
+    </script>
 </body>
 </html>
