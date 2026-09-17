@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estação do Frango - Pro</title>
+    
+    <style>
+        :root {
+            --primary-color: #d32f2f;
+            --secondary-color: #ff9800;
+            --bg-color: #f0f2f5;
+            --card-bg: #ffffff;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --border-radius: 12px;
+            --shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding-bottom: 40px;
+        }
+
+        .header {
+            width: 100%;
+            padding: 25px 20px;
+            background: linear-gradient(135deg, var(--primary-color), #b71c1c);
+            color: #fff;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(211, 47, 47, 0.3);
+            margin-bottom: 20px;
+        }
+
+        /* Navegação de Abas */
+        .top-nav {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            width: 95%;
+            max-width: 600px;
+            margin-bottom: 20px;
+        }
+
+        .nav-btn {
+            flex: 1;
+            padding: 15px 10px;
+            background: #e0e0e0;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-weight: bold;
+            color: #555;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .nav-btn.active {
+            background: var(--primary-color);
+            color: white;
+            box-shadow: 0 4px 10px rgba(211, 47, 47, 0.3);
+        }
+
+        /* CONTROLE DE EXIBIÇÃO DAS ABAS */
+        .tab-content { 
+            display: none; 
+            width: 100%; 
+            flex-direction: column; 
+            align-items: center; 
+        }
+        .tab-content.active { 
+            display: flex; 
+        }
+
+        /* Dashboard */
+        .dashboard {
+            display: flex;
+            gap: 15px;
+            width: 95%;
+            max-width: 600px;
+            margin-bottom: 20px;
+        }
+
+        .dash-card {
+            background: var(--card-bg);
+            flex: 1;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            text-align: center;
+            border-top: 4px solid var(--secondary-color);
+        }
+
+        .dash-card h3 { font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 10px; }
+        .dash-card .value { font-size: 1.8rem; font-weight: bold; color: var(--primary-color); }
+
+        /* Containers principais */
+        .container {
+            background-color: var(--card-bg);
+            width: 95%;
+            max-width: 600px;
+            margin-bottom: 20px;
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        h2 { color: var(--primary-color); margin-bottom: 25px; font-size: 1.5rem; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; }
+        label { display: block; color: var(--text-main); margin: 15px 0 8px; font-weight: 600; }
+        
+        input[type="number"], input[type="text"], select {
+            width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 1rem; transition: 0.3s;
+        }
+        input:focus, select:focus { outline: none; border-color: var(--secondary-color); }
+
+        .checkbox-group {
+            display: flex; align-items: center; gap: 10px; background: #f9f9f9; padding: 15px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #eee; cursor: pointer;
+        }
+        .checkbox-group input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; }
+        .checkbox-group label { margin: 0; cursor: pointer; font-weight: normal; }
+
+        .hidden-panel {
+            display: none; background: #fff8e1; padding: 15px; border-left: 4px solid var(--secondary-color); border-radius: 0 6px 6px 0; margin-bottom: 15px;
+        }
+
+        /* Botões */
+        .btn {
+            width: 100%; background-color: #34495e; color: white; padding: 15px; border: none; border-radius: 6px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 15px;
+        }
+        .btn:hover { background-color: #2c3e50; transform: translateY(-2px); }
+        .faturar-btn { background: linear-gradient(135deg, #27ae60, #2ecc71); font-size: 1.3rem; box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4); }
+        .faturar-btn:hover { background: linear-gradient(135deg, #219653, #27ae60); }
+        .btn-danger { background-color: #e74c3c; margin-top: 30px; }
+
+        /* ========================================================= */
+        /* RECIBO - PADRÃO ANTIGO REDUZIDO */
+        /* ========================================================= */
+        #recibo {
+            display: none;
+            border: 2px solid #333;
+            padding: 20px;
+            margin-top: 20px;
+            background-color: #f9f9f9;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        #reciboContent {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        #reciboValor {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+
+        @media print {
+            body * { visibility: hidden; }
+            #recibo, #recibo * { visibility: visible; }
+            #recibo { 
+                position: absolute; 
+                top: 0; 
+                left: 0; 
+                width: 100%; 
+                color: black; 
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <h1>🐔 Estação do Frango</h1>
+    </header>
+
+    <!-- NAVEGAÇÃO ENTRE AS PÁGINAS -->
+    <nav class="top-nav">
+        <button class="nav-btn active" onclick="mudarAba('vendas', this)">🛒 Novo Pedido</button>
+        <button class="nav-btn" onclick="mudarAba('config', this)">⚙️ Resumo e Caixa</button>
+    </nav>
+
+    <!-- PÁGINA 1: TELA DE VENDAS -->
+    <div id="aba-vendas" class="tab-content active">
+        <div class="container">
+            <section class="order-section">
+                <h2>Faturamento</h2>
+                
+                <label for="quantidade">Quantidade de Frangos a Faturar:</label>
+                <input type="number" id="quantidade" min="1" value="1">
+                
+                <!-- Adicionais -->
+                <label class="checkbox-group">
+                    <input type="checkbox" id="temAdicionalCheckbox">
+                    Adicionar linguiças adicionais?
+                </label>
+                
+                <div id="linguicaInfo" class="hidden-panel">
+                    <label for="quantidadeLinguica">Quantidade de Linguiças Adicionais:</label>
+                    <input type="number" id="quantidadeLinguica" min="0" value="0">
+                    <label for="precoLinguica">Valor da Linguiça (R$):</label>
+                    <input type="number" id="precoLinguica" min="0" value="2.50" step="0.01">
+                </div>
+
+                <!-- Reserva -->
+                <label class="checkbox-group">
+                    <input type="checkbox" id="reservaCheckbox">
+                    Reservar nome
+                </label>
+                <input type="text" id="nomeReserva" class="hidden-panel" placeholder="Nome da reserva">
+
+                <button id="faturarBtn" class="btn faturar-btn">Faturar</button>
+            </section>
+        </div>
+    </div>
+
+    <!-- PÁGINA 2: CONFIGURAÇÕES E CAIXA -->
+    <div id="aba-config" class="tab-content">
+        <div class="dashboard">
+            <div class="dash-card">
+                <h3>Disponíveis</h3>
+                <div class="value" id="contadorFrangos">50</div>
+            </div>
+            <div class="dash-card">
+                <h3>Vendidos Hoje</h3>
+                <div class="value" id="frangosVendidosHoje" style="color: #27ae60;">0</div>
+            </div>
+            <div class="dash-card">
+                <h3>Caixa R$</h3>
+                <div class="value" id="faturamentoHoje" style="color: #27ae60;">0,00</div>
+            </div>
+        </div>
+
+        <div class="container">
+            <section class="control-section">
+                <h2>⚙️ Configurações</h2>
+                
+                <label for="precoFrango">Preço do Frango (R$):</label>
+                <input type="number" id="precoFrango" value="28.00" step="0.01">
+
+                <label for="totalFrangos">Total de Frangos Disponíveis:</label>
+                <input type="number" id="totalFrangos" value="50" min="0">
+                <button id="atualizarBtn" class="btn">Atualizar Estoque</button>
+
+                <!-- Botão de Fechamento de Caixa -->
+                <button id="zerarCaixaBtn" class="btn btn-danger">Zerar Caixa do Dia</button>
+            </section>
+        </div>
+    </div>
+
+    <!-- RECIBO -->
+    <section id="recibo">
+        <div class="recibo-header"></div>
+        <div id="reciboContent" class="recibo-content"></div>
+        <div class="recibo-footer">
+            <p id="reciboValor" class="recibo-valor"></p>
+        </div>
+    </section>
+
+    <!-- INTELIGÊNCIA DO SISTEMA (JAVASCRIPT) -->
+    <script>
+        function mudarAba(abaId, elementoBotao) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById('aba-' + abaId).classList.add('active');
+            elementoBotao.classList.add('active');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const contadores = {
+                estoque: document.getElementById('contadorFrangos'),
+                vendidos: document.getElementById('frangosVendidosHoje'),
+                caixa: document.getElementById('faturamentoHoje')
+            };
+            const inputs = {
+                qtd: document.getElementById('quantidade'),
+                precoFrango: document.getElementById('precoFrango'),
+                precoLinguica: document.getElementById('precoLinguica'),
+                qtdLinguica: document.getElementById('quantidadeLinguica'),
+                novoEstoque: document.getElementById('totalFrangos'),
+                nomeReserva: document.getElementById('nomeReserva')
+            };
+            const checkboxes = {
+                linguica: document.getElementById('temAdicionalCheckbox'),
+                reserva: document.getElementById('reservaCheckbox')
+            };
+            const paineis = {
+                linguica: document.getElementById('linguicaInfo'),
+                reserva: document.getElementById('nomeReserva')
+            };
+            const recibo = document.getElementById('recibo');
+            const reciboContent = document.getElementById('reciboContent');
+            const reciboValor = document.getElementById('reciboValor');
+            
+            let dadosCaixa = {
+                estoque: parseInt(localStorage.getItem('estoqueFrangos')) || 10,
+                vendidos: parseInt(localStorage.getItem('vendidosHoje')) || 0,
+                faturamento: parseFloat(localStorage.getItem('faturamentoHoje')) || 0.00
+            };
+
+            const precoFrangoSalvo = localStorage.getItem('precoFrango');
+            if (precoFrangoSalvo) inputs.precoFrango.value = parseFloat(precoFrangoSalvo).toFixed(2);
+
+            const precoLinguicaSalvo = localStorage.getItem('precoLinguica');
+            if (precoLinguicaSalvo) inputs.precoLinguica.value = parseFloat(precoLinguicaSalvo).toFixed(2);
+
+            inputs.precoFrango.addEventListener('change', () => localStorage.setItem('precoFrango', inputs.precoFrango.value));
+            inputs.precoLinguica.addEventListener('change', () => localStorage.setItem('precoLinguica', inputs.precoLinguica.value));
+
+            function atualizarDashboard() {
+                contadores.estoque.innerText = Math.max(0, dadosCaixa.estoque);
+                inputs.novoEstoque.value = Math.max(0, dadosCaixa.estoque);
+                contadores.vendidos.innerText = dadosCaixa.vendidos;
+                contadores.caixa.innerText = dadosCaixa.faturamento.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+                
+                localStorage.setItem('estoqueFrangos', dadosCaixa.estoque);
+                localStorage.setItem('vendidosHoje', dadosCaixa.vendidos);
+                localStorage.setItem('faturamentoHoje', dadosCaixa.faturamento);
+            }
+            atualizarDashboard(); 
+
+            paineis.linguica.style.display = checkboxes.linguica.checked ? 'block' : 'none';
+            paineis.reserva.style.display = checkboxes.reserva.checked ? 'block' : 'none';
+
+            checkboxes.linguica.addEventListener('change', (e) => paineis.linguica.style.display = e.target.checked ? 'block' : 'none');
+            checkboxes.reserva.addEventListener('change', (e) => paineis.reserva.style.display = e.target.checked ? 'block' : 'none');
+
+                      // ==============================================================
+            // 100 VERSÍCULOS EDIFICADORES (Gatilhos de Conexão, Amor e Respostas)
+            // ==============================================================
+            const versiculos = [
+                // PROVISÃO, PROSPERIDADE E BÊNÇÃO (Sorte e Favor)
+                "Provai e vede que o Senhor é bom; como é feliz o homem que nele se refugia! - Salmos 34:8",
+                "O pão nosso de cada dia nos dá hoje. - Mateus 6:11",
+                "Comam do que é bom, e a alma de vocês se deliciará. - Isaías 55:2",
+                "A bênção do Senhor traz riqueza, e não inclui dor alguma. - Provérbios 10:22",
+                "Ele satisfaz o desejo dos que o temem; ouve o seu clamor e os salva. - Salmos 145:19",
+                "O Senhor te abençoe e te guarde; o Senhor faça resplandecer o seu rosto sobre ti. - Números 6:24-25",
+                "O meu Deus suprirá todas as necessidades de vocês, de acordo com as suas gloriosas riquezas. - Filipenses 4:19",
+                "O Senhor é o meu pastor; nada me faltará. - Salmos 23:1",
+                "Ele enche de bens a sua vida, e a sua juventude se renova como a da águia. - Salmos 103:5",
+                "Lancem a semente pela manhã e não descansem as mãos à tarde. - Eclesiastes 11:6",
+                "Aos que buscam o Senhor não falta bem nenhum. - Salmos 34:10",
+                "O generoso prosperará; quem dá alívio aos outros, alívio receberá. - Provérbios 11:25",
+                "Coma o seu pão com alegria e beba o seu vinho com o coração contente. - Eclesiastes 9:7",
+                "Nunca vi desamparado o justo, nem a sua semente a mendigar o pão. - Salmos 37:25",
+                "Toda boa dádiva e todo dom perfeito vêm do alto. - Tiago 1:17",
+                "O favor do Senhor, o nosso Deus, repouse sobre nós; consolida a obra de nossas mãos. - Salmos 90:17",
+                "O Senhor mandará que a bênção esteja contigo em tudo o que puseres a tua mão. - Deuteronômio 28:8",
+                "Sede fortes, e não desfaleçam as vossas mãos, porque a vossa obra terá uma recompensa. - 2 Crônicas 15:7",
+                "Eis que o Senhor teu Deus te abençoou em toda a obra das tuas mãos. - Deuteronômio 2:7",
+                "O Senhor te guiará constantemente; satisfará os teus desejos numa terra ressequida. - Isaías 58:11",
+
+                // AMOR E COMPREENSÃO (Acolhimento)
+                "Acima de tudo, amem sinceramente uns aos outros. - 1 Pedro 4:8",
+                "O amor é paciente, o amor é bondoso. Não inveja, não se vangloria, não se orgulha. - 1 Coríntios 13:4",
+                "A resposta calma desvia a fúria, mas a palavra ríspida desperta a ira. - Provérbios 15:1",
+                "Nós amamos porque ele nos amou primeiro. - 1 João 4:19",
+                "Deus é amor. Quem permanece no amor permanece em Deus. - 1 João 4:16",
+                "O amor seja sem hipocrisia. Odeiem o mal e apeguem-se ao bem. - Romanos 12:9",
+                "Assim, permanecem agora estes três: a fé, a esperança e o amor. O maior deles, porém, é o amor. - 1 Coríntios 13:13",
+                "Façam tudo com amor. - 1 Coríntios 16:14",
+                "Ame o seu próximo como a si mesmo. - Marcos 12:31",
+                "O amigo ama em todos os momentos; é um irmão na adversidade. - Provérbios 17:17",
+                "Aquele que cobre uma ofensa promove amor, mas quem a joga em rosto separa bons amigos. - Provérbios 17:9",
+                "Com toda a humildade e mansidão, com longanimidade, suportando-vos uns aos outros em amor. - Efésios 4:2",
+                "E andai em amor, como também Cristo nos amou. - Efésios 5:2",
+                "A beleza de vocês não deve estar nos enfeites exteriores... mas no íntimo do coração. - 1 Pedro 3:3-4",
+                "Um novo mandamento lhes dou: Amem-se uns aos outros. - João 13:34",
+                "Não amemos de palavra nem de boca, mas em ação e em verdade. - 1 João 3:18",
+                "O ódio provoca dissensão, mas o amor cobre todos os pecados. - Provérbios 10:12",
+                "A compaixão e o amor do Senhor não têm fim. - Lamentações 3:22",
+                "Abençoem aqueles que os amaldiçoam, orem por aqueles que os maltratam. - Lucas 6:28",
+                "Como a água reflete o rosto, assim o coração do homem reflete o homem. - Provérbios 27:19",
+
+                // PERDÃO E PAZ (Alívio para a alma)
+                "Sejam bondosos e compassivos uns para com os outros, perdoando-se mutuamente. - Efésios 4:32",
+                "Deixo-lhes a paz; a minha paz lhes dou. Não a dou como o mundo a dá. - João 14:27",
+                "Não andem ansiosos por coisa alguma, mas em tudo apresentem seus pedidos a Deus. - Filipenses 4:6",
+                "E a paz de Deus, que excede todo o entendimento, guardará os seus corações. - Filipenses 4:7",
+                "Porque sou eu que conheço os planos que tenho para vocês... planos de fazê-los prosperar. - Jeremias 29:11",
+                "Apeguemo-nos com firmeza à esperança que professamos, pois aquele que prometeu é fiel. - Hebreus 10:23",
+                "Se confessarmos os nossos pecados, ele é fiel e justo para perdoar... e nos purificar. - 1 João 1:9",
+                "O Senhor te abençoe e te guarde; o Senhor te conceda a paz. - Números 6:24,26",
+                "Bem-aventurados os pacificadores, porque serão chamados filhos de Deus. - Mateus 5:9",
+                "Suportem-se uns aos outros e perdoem as queixas que tiverem. Perdoem como o Senhor lhes perdoou. - Colossenses 3:13",
+                "O Senhor dá força ao seu povo; o Senhor dá a seu povo a bênção da paz. - Salmos 29:11",
+                "Os que amam a tua lei desfrutam paz, e nada há que os faça tropeçar. - Salmos 119:165",
+                "O fruto da justiça será a paz; o resultado da justiça será tranquilidade e confiança. - Isaías 32:17",
+                "Ele curou os que tinham o coração partido e cuidou das suas feridas. - Salmos 147:3",
+                "Quem confessa os seus pecados e os abandona encontra misericórdia. - Provérbios 28:13",
+                "A sabedoria que vem do alto é antes de tudo pura; depois, pacífica, amável e compreensiva. - Tiago 3:17",
+                "Se for possível, quanto depender de vocês, vivam em paz com todos. - Romanos 12:18",
+                "Vinde a mim, todos os que estais cansados e sobrecarregados, e eu vos aliviarei. - Mateus 11:28",
+                "No mundo tereis aflições, mas tende bom ânimo; eu venci o mundo. - João 16:33",
+                "O próprio Senhor da paz lhes dê a paz em todo o tempo e de todas as formas. - 2 Tessalonicenses 3:16",
+
+                // RESPOSTAS E DIREÇÃO (Para quem busca um sinal)
+                "Clama a mim, e responder-te-ei, e anunciar-te-ei coisas grandes e firmes que não sabes. - Jeremias 33:3",
+                "Peçam, e lhes será dado; busquem, e encontrarão; batam, e a porta lhes será aberta. - Mateus 7:7",
+                "Se algum de vocês tem falta de sabedoria, peça-a a Deus, que a todos dá livremente. - Tiago 1:5",
+                "Confie no Senhor de todo o seu coração e não se apoie em seu próprio entendimento. - Provérbios 3:5",
+                "Lâmpada para os meus pés é tua palavra, e luz para o meu caminho. - Salmos 119:105",
+                "Reconheça o Senhor em todos os seus caminhos, e ele endireitará as suas veredas. - Provérbios 3:6",
+                "O coração do homem planeja o seu caminho, mas o Senhor lhe dirige os passos. - Provérbios 16:9",
+                "Ensina-me o teu caminho, Senhor, para que eu ande na tua verdade. - Salmos 86:11",
+                "Elevo os meus olhos para os montes: de onde me virá o socorro? O meu socorro vem do Senhor. - Salmos 121:1-2",
+                "Instruir-te-ei e te ensinarei o caminho que deves seguir; guiar-te-ei com os meus olhos. - Salmos 32:8",
+                "Mostra-me, Senhor, os teus caminhos, ensina-me as tuas veredas. - Salmos 25:4",
+                "Consagre ao Senhor tudo o que você faz, e os seus planos serão bem-sucedidos. - Provérbios 16:3",
+                "A explicação das tuas palavras ilumina e dá discernimento aos inexperientes. - Salmos 119:130",
+                "Entregue o seu caminho ao Senhor; confie nele, e ele o fará. - Salmos 37:5",
+                "Pois a sua ira só dura um instante, mas o seu favor dura a vida toda. - Salmos 30:5",
+                "Deus é o nosso refúgio e a nossa fortaleza, auxílio sempre presente na adversidade. - Salmos 46:1",
+                "Conheçamos o Senhor; esforcemo-nos por conhecê-lo. - Oséias 6:3",
+                "Mas, buscai primeiro o reino de Deus, e a sua justiça, e todas estas coisas vos serão acrescentadas. - Mateus 6:33",
+                "O Senhor é a minha luz e a minha salvação; de quem terei temor? - Salmos 27:1",
+                "Respondeu-lhe Jesus: Eu sou o caminho, a verdade e a vida. - João 14:6",
+
+                // PERSEVERANÇA E CORAGEM (Para quem está cansado e pensa em desistir)
+                "Espera no Senhor, anima-te, e ele fortalecerá o teu coração. - Salmos 27:14",
+                "A fé é a certeza daquilo que esperamos e a prova das coisas que não vemos. - Hebreus 11:1",
+                "Não fui eu que ordenei a você? Seja forte e corajoso! Não se apavore nem desanime. - Josué 1:9",
+                "Tudo posso naquele que me fortalece. - Filipenses 4:13",
+                "E não nos cansemos de fazer o bem, pois no tempo próprio colheremos, se não desanimarmos. - Gálatas 6:9",
+                "Mas os que esperam no Senhor renovarão as forças, subirão com asas como águias. - Isaías 40:31",
+                "Mesmo quando eu andar por um vale de trevas e morte, não temerei perigo algum, pois tu estás comigo. - Salmos 23:4",
+                "Mil poderão cair ao seu lado; dez mil, à sua direita, mas nada o atingirá. - Salmos 91:7",
+                "Alegrai-vos na esperança, sede pacientes na tribulação, perseverai na oração. - Romanos 12:12",
+                "O Senhor lutará por vocês; tão somente acalmem-se. - Êxodo 14:14",
+                "Bem-aventurado o homem que suporta a provação... receberá a coroa da vida. - Tiago 1:12",
+                "Porque para Deus nada é impossível. - Lucas 1:37",
+                "Pois o Senhor, o seu Deus, os acompanhará e lutará por vocês. - Deuteronômio 20:4",
+                "Aquietai-vos, e sabei que eu sou Deus. - Salmos 46:10",
+                "O Senhor é o meu rochedo, o meu lugar forte e o meu libertador. - Salmos 18:2",
+                "Sede fortes e corajosos; não temais... pois o Senhor teu Deus é quem vai contigo. - Deuteronômio 31:6",
+                "Pois eu sou o Senhor, o seu Deus, que o segura pela mão direita e diz: Não tema; eu o ajudarei. - Isaías 41:13",
+                "Aquele que habita no esconderijo do Altíssimo, à sombra do Onipotente descansará. - Salmos 91:1",
+                "Combati o bom combate, acabei a carreira, guardei a fé. - 2 Timóteo 4:7",
+                "O amor do Senhor não tem fim! Suas misericórdias são inesgotáveis. - Lamentações 3:22"
+            ];
+
+
+            // FATURAR E IMPRIMIR
+            document.getElementById('faturarBtn').addEventListener('click', () => {
+                const quantidadeFrangos = parseInt(inputs.qtd.value) || 0;
+                if (quantidadeFrangos <= 0) return alert("Digite uma quantidade válida!");
+
+                const precoFrango = parseFloat(inputs.precoFrango.value);
+                const precoLinguica = parseFloat(inputs.precoLinguica.value);
+                
+                const linguicasGratis = quantidadeFrangos;
+                let quantidadeLinguicaAdicional = 0;
+                let totalLinguicaCobrar = 0;
+                let linguicasAdicionaisTexto = "";
+
+                if (checkboxes.linguica.checked) {
+                    const quantidadeLinguica = parseInt(inputs.qtdLinguica.value) || 0;
+                    quantidadeLinguicaAdicional = quantidadeLinguica;
+                    totalLinguicaCobrar = quantidadeLinguicaAdicional * precoLinguica;
+                    linguicasAdicionaisTexto = `${quantidadeLinguicaAdicional} linguiça(s) adicional(is) a R$ ${precoLinguica.toFixed(2)} cada. `;
+                }
+
+                const totalLinguicas = linguicasGratis + quantidadeLinguicaAdicional;
+                const total = (quantidadeFrangos * precoFrango) + totalLinguicaCobrar;
+
+                // Atualizar Caixa
+                dadosCaixa.estoque -= quantidadeFrangos;
+                dadosCaixa.vendidos += quantidadeFrangos;
+                dadosCaixa.faturamento += total;
+                atualizarDashboard();
+
+                // Sorteia um versículo da lista
+                const versiculoSorteado = versiculos[Math.floor(Math.random() * versiculos.length)];
+
+                // Montar o Recibo
+                let reciboText = `<strong>Estação do Frango</strong><br>Bom Almoço!<br>`;
+                
+                if (checkboxes.reserva.checked && inputs.nomeReserva.value) {
+                    reciboText += `Reservado para: ${inputs.nomeReserva.value}<br>`;
+                }
+
+                reciboText += `${quantidadeFrangos} Frango Assado<br>`;
+                reciboText += `ㅤㅤㅤ${totalLinguicas} linguiça ㅤㅤㅤㅤㅤㅤㅤㅤ${quantidadeFrangos} saquinho de farofa<br>`;
+                if (quantidadeLinguicaAdicional > 0) {
+                    reciboText += linguicasAdicionaisTexto + `<br>`;
+                }
+                
+                reciboText += `Data: ${new Date().toLocaleDateString()}<br>`;
+                
+                // MENSAGEM BÍBLICA: Cor preta absoluta (#000), negrito (bold) e tamanho ajustado para impressora térmica.
+                reciboText += `<div style="margin-top: 15px; font-size: 0.85em; font-style: italic; font-weight: bold; color: #000; padding: 0 10px;">"${versiculoSorteado}"</div>`;
+
+                reciboContent.innerHTML = reciboText;
+                reciboValor.innerText = `Total a pagar: R$ ${total.toFixed(2)}`;
+
+                // Exibir e Imprimir
+                recibo.style.display = 'block';
+
+                // Limpeza Instantânea do Formulário
+                inputs.qtd.value = 1;
+                inputs.qtdLinguica.value = 0;
+                inputs.nomeReserva.value = "";
+                checkboxes.linguica.checked = false;
+                checkboxes.reserva.checked = false;
+                paineis.linguica.style.display = 'none';
+                paineis.reserva.style.display = 'none';
+
+                setTimeout(() => window.print(), 500);
+            });
+
+            // Esconder recibo após impressão
+            window.addEventListener('afterprint', () => {
+                recibo.style.display = 'none';
+            });
+
+            // Atualizar Estoque
+            document.getElementById('atualizarBtn').addEventListener('click', () => {
+                dadosCaixa.estoque = parseInt(inputs.novoEstoque.value);
+                atualizarDashboard();
+                localStorage.setItem('precoFrango', inputs.precoFrango.value);
+                alert("Estoque atualizado com sucesso!");
+            });
+
+            // Fechamento de Caixa
+            document.getElementById('zerarCaixaBtn').addEventListener('click', () => {
+                if (confirm("ATENÇÃO: Deseja realmente zerar o faturamento e as vendas de hoje? O estoque não será alterado.")) {
+                    dadosCaixa.vendidos = 0;
+                    dadosCaixa.faturamento = 0;
+                    atualizarDashboard();
+                    alert("Caixa zerado com sucesso!");
+                }
+            });
+        });
+    </script>
+</body>
+</html> 
