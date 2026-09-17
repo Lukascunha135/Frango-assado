@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estação do Frango - Pro</title>
+    
+    <style>
+        :root {
+            --primary-color: #d32f2f;
+            --secondary-color: #ff9800;
+            --bg-color: #f0f2f5;
+            --card-bg: #ffffff;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --border-radius: 12px;
+            --shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding-bottom: 40px;
+        }
+
+        .header {
+            width: 100%;
+            padding: 25px 20px;
+            background: linear-gradient(135deg, var(--primary-color), #b71c1c);
+            color: #fff;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(211, 47, 47, 0.3);
+            margin-bottom: 20px;
+        }
+
+        /* Navegação de Abas */
+        .top-nav {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            width: 95%;
+            max-width: 600px;
+            margin-bottom: 20px;
+        }
+
+        .nav-btn {
+            flex: 1;
+            padding: 15px 10px;
+            background: #e0e0e0;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-weight: bold;
+            color: #555;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .nav-btn.active {
+            background: var(--primary-color);
+            color: white;
+            box-shadow: 0 4px 10px rgba(211, 47, 47, 0.3);
+        }
+
+        /* CONTROLE DE EXIBIÇÃO DAS ABAS */
+        .tab-content { 
+            display: none; 
+            width: 100%; 
+            flex-direction: column; 
+            align-items: center; 
+        }
+        .tab-content.active { 
+            display: flex; 
+        }
+
+        /* Dashboard */
+        .dashboard {
+            display: flex;
+            gap: 15px;
+            width: 95%;
+            max-width: 600px;
+            margin-bottom: 20px;
+        }
+
+        .dash-card {
+            background: var(--card-bg);
+            flex: 1;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            text-align: center;
+            border-top: 4px solid var(--secondary-color);
+        }
+
+        .dash-card h3 { font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 10px; }
+        .dash-card .value { font-size: 1.8rem; font-weight: bold; color: var(--primary-color); }
+
+        /* Containers principais */
+        .container {
+            background-color: var(--card-bg);
+            width: 95%;
+            max-width: 600px;
+            margin-bottom: 20px;
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        h2 { color: var(--primary-color); margin-bottom: 25px; font-size: 1.5rem; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; }
+        label { display: block; color: var(--text-main); margin: 15px 0 8px; font-weight: 600; }
+        
+        input[type="number"], input[type="text"], select {
+            width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 1rem; transition: 0.3s;
+        }
+        input:focus, select:focus { outline: none; border-color: var(--secondary-color); }
+
+        .checkbox-group {
+            display: flex; align-items: center; gap: 10px; background: #f9f9f9; padding: 15px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #eee; cursor: pointer;
+        }
+        .checkbox-group input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; }
+        .checkbox-group label { margin: 0; cursor: pointer; font-weight: normal; }
+
+        .hidden-panel {
+            display: none; background: #fff8e1; padding: 15px; border-left: 4px solid var(--secondary-color); border-radius: 0 6px 6px 0; margin-bottom: 15px;
+        }
+
+        /* Botões */
+        .btn {
+            width: 100%; background-color: #34495e; color: white; padding: 15px; border: none; border-radius: 6px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 15px;
+        }
+        .btn:hover { background-color: #2c3e50; transform: translateY(-2px); }
+        .faturar-btn { background: linear-gradient(135deg, #27ae60, #2ecc71); font-size: 1.3rem; box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4); }
+        .faturar-btn:hover { background: linear-gradient(135deg, #219653, #27ae60); }
+        .btn-danger { background-color: #e74c3c; margin-top: 30px; }
+
+        /* ========================================================= */
+        /* RECIBO - VOLTANDO AO PADRÃO ANTIGO REDUZIDO */
+        /* ========================================================= */
+        #recibo {
+            display: none;
+            border: 2px solid #333;
+            padding: 20px;
+            margin-top: 20px;
+            background-color: #f9f9f9;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        #reciboContent {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        #reciboValor {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+
+        @media print {
+            body * { visibility: hidden; }
+            #recibo, #recibo * { visibility: visible; }
+            #recibo { 
+                position: absolute; 
+                top: 0; 
+                left: 0; 
+                width: 100%; 
+                color: black; 
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <h1>🐔 Estação do Frango</h1>
+    </header>
+
+    <!-- NAVEGAÇÃO ENTRE AS PÁGINAS -->
+    <nav class="top-nav">
+        <button class="nav-btn active" onclick="mudarAba('vendas', this)">🛒 Novo Pedido</button>
+        <button class="nav-btn" onclick="mudarAba('config', this)">⚙️ Resumo e Caixa</button>
+    </nav>
+
+    <!-- PÁGINA 1: TELA DE VENDAS -->
+    <div id="aba-vendas" class="tab-content active">
+        <div class="container">
+            <section class="order-section">
+                <h2>Faturamento</h2>
+                
+                <label for="quantidade">Quantidade de Frangos a Faturar:</label>
+                <input type="number" id="quantidade" min="1" value="1">
+                
+                <!-- Adicionais -->
+                <label class="checkbox-group">
+                    <input type="checkbox" id="temAdicionalCheckbox">
+                    Adicionar linguiças adicionais?
+                </label>
+                
+                <div id="linguicaInfo" class="hidden-panel">
+                    <label for="quantidadeLinguica">Quantidade de Linguiças Adicionais:</label>
+                    <input type="number" id="quantidadeLinguica" min="0" value="0">
+                    <label for="precoLinguica">Valor da Linguiça (R$):</label>
+                    <!-- Ajustado para ponto decimal para funcionar no HTML5 -->
+                    <input type="number" id="precoLinguica" min="0" value="2.50" step="0.01">
+                </div>
+
+                <!-- Reserva e Pagamento -->
+                <label class="checkbox-group">
+                    <input type="checkbox" id="reservaCheckbox">
+                    Reservar nome
+                </label>
+                <input type="text" id="nomeReserva" class="hidden-panel" placeholder="Nome da reserva">
+
+                <button id="faturarBtn" class="btn faturar-btn">Faturar</button>
+            </section>
+        </div>
+    </div>
+
+    <!-- PÁGINA 2: CONFIGURAÇÕES E CAIXA -->
+    <div id="aba-config" class="tab-content">
+        <div class="dashboard">
+            <div class="dash-card">
+                <h3>Disponíveis</h3>
+                <div class="value" id="contadorFrangos">50</div>
+            </div>
+            <div class="dash-card">
+                <h3>Vendidos Hoje</h3>
+                <div class="value" id="frangosVendidosHoje" style="color: #27ae60;">0</div>
+            </div>
+            <div class="dash-card">
+                <h3>Caixa R$</h3>
+                <div class="value" id="faturamentoHoje" style="color: #27ae60;">0,00</div>
+            </div>
+        </div>
+
+        <div class="container">
+            <section class="control-section">
+                <h2>⚙️ Configurações</h2>
+                
+                <label for="precoFrango">Preço do Frango (R$):</label>
+                <input type="number" id="precoFrango" value="28.00" step="0.01">
+
+                <label for="totalFrangos">Total de Frangos Disponíveis:</label>
+                <input type="number" id="totalFrangos" value="50" min="0">
+                <button id="atualizarBtn" class="btn">Atualizar</button>
+
+                <!-- Botão de Fechamento de Caixa -->
+                <button id="zerarCaixaBtn" class="btn btn-danger">Zerar Caixa do Dia</button>
+            </section>
+        </div>
+    </div>
+
+    <!-- RECIBO COM A ESTRUTURA ANTIGA -->
+    <section id="recibo">
+        <div class="recibo-header"></div>
+        <div id="reciboContent" class="recibo-content"></div>
+        <div class="recibo-footer">
+            <p id="reciboValor" class="recibo-valor"></p>
+        </div>
+    </section>
+
+    <!-- INTELIGÊNCIA DO SISTEMA (JAVASCRIPT) -->
+    <script>
+        // Função para alternar entre as abas (Páginas)
+        function mudarAba(abaId, elementoBotao) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById('aba-' + abaId).classList.add('active');
+            elementoBotao.classList.add('active');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const contadores = {
+                estoque: document.getElementById('contadorFrangos'),
+                vendidos: document.getElementById('frangosVendidosHoje'),
+                caixa: document.getElementById('faturamentoHoje')
+            };
+            const inputs = {
+                qtd: document.getElementById('quantidade'),
+                precoFrango: document.getElementById('precoFrango'),
+                precoLinguica: document.getElementById('precoLinguica'),
+                qtdLinguica: document.getElementById('quantidadeLinguica'),
+                novoEstoque: document.getElementById('totalFrangos'),
+                nomeReserva: document.getElementById('nomeReserva')
+            };
+            const checkboxes = {
+                linguica: document.getElementById('temAdicionalCheckbox'),
+                reserva: document.getElementById('reservaCheckbox')
+            };
+            const paineis = {
+                linguica: document.getElementById('linguicaInfo'),
+                reserva: document.getElementById('nomeReserva')
+            };
+            const recibo = document.getElementById('recibo');
+            const reciboContent = document.getElementById('reciboContent');
+            const reciboValor = document.getElementById('reciboValor');
+            
+            // CARREGAMENTO DE DADOS SALVOS
+            let dadosCaixa = {
+                estoque: parseInt(localStorage.getItem('estoqueFrangos')) || 10,
+                vendidos: parseInt(localStorage.getItem('vendidosHoje')) || 0,
+                faturamento: parseFloat(localStorage.getItem('faturamentoHoje')) || 0.00
+            };
+
+            function atualizarDashboard() {
+                contadores.estoque.innerText = Math.max(0, dadosCaixa.estoque);
+                inputs.novoEstoque.value = Math.max(0, dadosCaixa.estoque);
+                contadores.vendidos.innerText = dadosCaixa.vendidos;
+                contadores.caixa.innerText = dadosCaixa.faturamento.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+                
+                localStorage.setItem('estoqueFrangos', dadosCaixa.estoque);
+                localStorage.setItem('vendidosHoje', dadosCaixa.vendidos);
+                localStorage.setItem('faturamentoHoje', dadosCaixa.faturamento);
+            }
+            atualizarDashboard(); 
+
+            // Sincroniza o visual com a caixinha logo ao carregar
+            paineis.linguica.style.display = checkboxes.linguica.checked ? 'block' : 'none';
+            paineis.reserva.style.display = checkboxes.reserva.checked ? 'block' : 'none';
+
+            // Eventos de clique para mostrar/esconder painéis
+            checkboxes.linguica.addEventListener('change', (e) => paineis.linguica.style.display = e.target.checked ? 'block' : 'none');
+            checkboxes.reserva.addEventListener('change', (e) => paineis.reserva.style.display = e.target.checked ? 'block' : 'none');
+
+            // FATURAR E IMPRIMIR
+            document.getElementById('faturarBtn').addEventListener('click', () => {
+                const quantidadeFrangos = parseInt(inputs.qtd.value) || 0;
+                if (quantidadeFrangos <= 0) return alert("Digite uma quantidade válida!");
+
+                const precoFrango = parseFloat(inputs.precoFrango.value);
+                const precoLinguica = parseFloat(inputs.precoLinguica.value);
+                
+                const linguicasGratis = quantidadeFrangos;
+                let quantidadeLinguicaAdicional = 0;
+                let totalLinguicaCobrar = 0;
+                let linguicasAdicionaisTexto = "";
+
+                if (checkboxes.linguica.checked) {
+                    const quantidadeLinguica = parseInt(inputs.qtdLinguica.value) || 0;
+                    quantidadeLinguicaAdicional = quantidadeLinguica;
+                    totalLinguicaCobrar = quantidadeLinguicaAdicional * precoLinguica;
+                    linguicasAdicionaisTexto = `${quantidadeLinguicaAdicional} linguiça(s) adicional(is) a R$ ${precoLinguica.toFixed(2)} cada. `;
+                }
+
+                const totalLinguicas = linguicasGratis + quantidadeLinguicaAdicional;
+                const total = (quantidadeFrangos * precoFrango) + totalLinguicaCobrar;
+
+                // Atualizar Caixa
+                dadosCaixa.estoque -= quantidadeFrangos;
+                dadosCaixa.vendidos += quantidadeFrangos;
+                dadosCaixa.faturamento += total;
+                atualizarDashboard();
+
+                const numeroRecibo = Date.now().toString().slice(-6);
+
+                // =================================================================
+                // TEXTO DO RECIBO EXATAMENTE IGUAL AO SEU ARQUIVO ORIGINAL
+                // =================================================================
+                let reciboText = `<strong>Estação do Frango</strong><br>Bom Almoço!<br>`;
+                
+                if (checkboxes.reserva.checked && inputs.nomeReserva.value) {
+                    reciboText += `Reservado para: ${inputs.nomeReserva.value}<br>`;
+                }
+
+                reciboText += `${quantidadeFrangos} Frango Assado<br>`;
+                reciboText += `ㅤㅤㅤ${totalLinguicas} linguiça ㅤㅤㅤㅤㅤㅤㅤㅤ${quantidadeFrangos} saquinho de farofa<br>`;
+                if (quantidadeLinguicaAdicional > 0) {
+                    reciboText += linguicasAdicionaisTexto + `<br>`;
+                }
+                
+                // Opção de forma de pagamento no recibo antigo, caso não queira pode apagar essa linha:
+                const formaPagto = document.getElementById('formaPagamento') ? document.getElementById('formaPagamento').value : '';
+                if(formaPagto) {
+                    reciboText += `Pagamento: ${formaPagto}<br>`;
+                }
+
+                reciboText += `ID: ${numeroRecibo}<br>`;
+                reciboText += `Vencimento do recibo: ${new Date().toLocaleDateString()}`;
+
+                reciboContent.innerHTML = reciboText;
+                reciboValor.innerText = `Total a pagar: R$ ${total.toFixed(2)}`;
+
+                // Exibir e Imprimir
+                recibo.style.display = 'block';
+
+                // Limpeza Instantânea do Formulário
+                inputs.qtd.value = 1;
+                inputs.qtdLinguica.value = 0;
+                inputs.nomeReserva.value = "";
+                checkboxes.linguica.checked = false;
+                checkboxes.reserva.checked = false;
+                paineis.linguica.style.display = 'none';
+                paineis.reserva.style.display = 'none';
+
+                setTimeout(() => window.print(), 500);
+            });
+
+            // Esconder recibo após impressão
+            window.addEventListener('afterprint', () => {
+                recibo.style.display = 'none';
+            });
+
+            // Atualizar Estoque
+            document.getElementById('atualizarBtn').addEventListener('click', () => {
+                dadosCaixa.estoque = parseInt(inputs.novoEstoque.value);
+                atualizarDashboard();
+                alert("Estoque atualizado com sucesso!");
+            });
+
+            // Fechamento de Caixa
+            document.getElementById('zerarCaixaBtn').addEventListener('click', () => {
+                if (confirm("ATENÇÃO: Deseja realmente zerar o faturamento e as vendas de hoje? O estoque não será alterado.")) {
+                    dadosCaixa.vendidos = 0;
+                    dadosCaixa.faturamento = 0;
+                    atualizarDashboard();
+                    alert("Caixa zerado com sucesso!");
+                }
+            });
+        });
+    </script>
+</body>
+</html>
