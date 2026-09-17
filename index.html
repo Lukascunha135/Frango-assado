@@ -491,16 +491,186 @@
                 }
                 
                 reciboText += `Data: ${new Date().toLocaleDateString()}<br>`;
+    <script>
+        function mudarAba(abaId, elementoBotao) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById('aba-' + abaId).classList.add('active');
+            elementoBotao.classList.add('active');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const contadores = {
+                estoque: document.getElementById('contadorFrangos'),
+                vendidos: document.getElementById('frangosVendidosHoje'),
+                caixa: document.getElementById('faturamentoHoje')
+            };
+            const inputs = {
+                qtd: document.getElementById('quantidade'),
+                precoFrango: document.getElementById('precoFrango'),
+                precoLinguica: document.getElementById('precoLinguica'),
+                qtdLinguica: document.getElementById('quantidadeLinguica'),
+                novoEstoque: document.getElementById('totalFrangos'),
+                nomeReserva: document.getElementById('nomeReserva')
+            };
+            const checkboxes = {
+                linguica: document.getElementById('temAdicionalCheckbox'),
+                reserva: document.getElementById('reservaCheckbox')
+            };
+            const paineis = {
+                linguica: document.getElementById('linguicaInfo'),
+                reserva: document.getElementById('nomeReserva')
+            };
+            const recibo = document.getElementById('recibo');
+            const reciboContent = document.getElementById('reciboContent');
+            const reciboValor = document.getElementById('reciboValor');
+            
+            let dadosCaixa = {
+                estoque: parseInt(localStorage.getItem('estoqueFrangos')) || 10,
+                vendidos: parseInt(localStorage.getItem('vendidosHoje')) || 0,
+                faturamento: parseFloat(localStorage.getItem('faturamentoHoje')) || 0.00
+            };
+
+            const precoFrangoSalvo = localStorage.getItem('precoFrango');
+            if (precoFrangoSalvo) inputs.precoFrango.value = parseFloat(precoFrangoSalvo).toFixed(2);
+
+            const precoLinguicaSalvo = localStorage.getItem('precoLinguica');
+            if (precoLinguicaSalvo) inputs.precoLinguica.value = parseFloat(precoLinguicaSalvo).toFixed(2);
+
+            inputs.precoFrango.addEventListener('change', () => localStorage.setItem('precoFrango', inputs.precoFrango.value));
+            inputs.precoLinguica.addEventListener('change', () => localStorage.setItem('precoLinguica', inputs.precoLinguica.value));
+
+            function atualizarDashboard() {
+                contadores.estoque.innerText = Math.max(0, dadosCaixa.estoque);
+                inputs.novoEstoque.value = Math.max(0, dadosCaixa.estoque);
+                contadores.vendidos.innerText = dadosCaixa.vendidos;
+                contadores.caixa.innerText = dadosCaixa.faturamento.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
                 
-                // Adicionando a mensagem bíblica sorteada no finalzinho, em itálico e fonte suave
-                reciboText += `<div style="margin-top: 15px; font-size: 0.75em; font-style: italic; font-weight: normal; color: #555;">"${versiculoSorteado}"</div>`;
+                localStorage.setItem('estoqueFrangos', dadosCaixa.estoque);
+                localStorage.setItem('vendidosHoje', dadosCaixa.vendidos);
+                localStorage.setItem('faturamentoHoje', dadosCaixa.faturamento);
+            }
+            atualizarDashboard(); 
+
+            paineis.linguica.style.display = checkboxes.linguica.checked ? 'block' : 'none';
+            paineis.reserva.style.display = checkboxes.reserva.checked ? 'block' : 'none';
+
+            checkboxes.linguica.addEventListener('change', (e) => paineis.linguica.style.display = e.target.checked ? 'block' : 'none');
+            checkboxes.reserva.addEventListener('change', (e) => paineis.reserva.style.display = e.target.checked ? 'block' : 'none');
+
+            // ==============================================================
+            // 50 VERSÍCULOS DE PERSEVERANÇA E RESPOSTAS AO CORAÇÃO
+            // ==============================================================
+            const versiculos = [
+                "Espera no Senhor, anima-te, e ele fortalecerá o teu coração. - Salmos 27:14",
+                "Clama a mim, e responder-te-ei coisas grandes e firmes que não sabes. - Jeremias 33:3",
+                "Não fui eu que ordenei a você? Seja forte e corajoso! Não se apavore nem desanime. - Josué 1:9",
+                "E não nos cansemos de fazer o bem, pois no tempo próprio colheremos, se não desanimarmos. - Gálatas 6:9",
+                "Entrega o teu caminho ao Senhor; confia nele, e ele o fará. - Salmos 37:5",
+                "Mas os que esperam no Senhor renovarão as forças, subirão com asas como águias. - Isaías 40:31",
+                "Tenho-vos dito isto, para que em mim tenhais paz; no mundo tereis aflições, mas tende bom ânimo. - João 16:33",
+                "Deleite-se no Senhor, e ele atenderá aos desejos do seu coração. - Salmos 37:4",
+                "Pois eu bem sei os planos que estou projetando para vós... planos de paz, e não de mal. - Jeremias 29:11",
+                "Deixo-vos a paz, a minha paz vos dou... Não se turbe o vosso coração, nem se atemorize. - João 14:27",
+                "O choro pode durar uma noite, mas a alegria vem pela manhã. - Salmos 30:5",
+                "Venham a mim, todos os que estão cansados e sobrecarregados, e eu darei descanso a vocês. - Mateus 11:28",
+                "Não andem ansiosos por coisa alguma... apresentem seus pedidos a Deus. E a paz de Deus guardará o coração de vocês. - Filipenses 4:6-7",
+                "Tudo posso naquele que me fortalece. - Filipenses 4:13",
+                "O coração do homem planeja o seu caminho, mas o Senhor lhe dirige os passos. - Provérbios 16:9",
+                "O Senhor está perto dos que têm o coração quebrantado e salva os de espírito abatido. - Salmos 34:18",
+                "Sede fortes, e revigore-se o vosso coração, vós todos que esperais no Senhor. - Salmos 31:24",
+                "Lancem sobre ele toda a sua ansiedade, porque ele tem cuidado de vocês. - 1 Pedro 5:7",
+                "Ainda que a minha mente e o meu corpo enfraqueçam, Deus é a minha força. - Salmos 73:26",
+                "E sabemos que todas as coisas contribuem juntamente para o bem daqueles que amam a Deus. - Romanos 8:28",
+                "Elevo os olhos para os montes: de onde me virá o socorro? O meu socorro vem do Senhor. - Salmos 121:1-2",
+                "Peçam, e será dado; busquem, e encontrarão; batam, e a porta será aberta. - Mateus 7:7",
+                "Mesmo quando eu andar por um vale de trevas e morte, não temerei perigo algum, pois tu estás comigo. - Salmos 23:4",
+                "Mil poderão cair ao seu lado; dez mil, à sua direita, mas nada o atingirá. - Salmos 91:7",
+                "Confia no Senhor de todo o teu coração, e não te estribes no teu próprio entendimento. - Provérbios 3:5",
+                "A fé é a certeza daquilo que esperamos e a prova das coisas que não vemos. - Hebreus 11:1",
+                "Alegrai-vos na esperança, sede pacientes na tribulação, perseverai na oração. - Romanos 12:12",
+                "As misericórdias do Senhor são a causa de não sermos consumidos... renovam-se cada manhã. - Lamentações 3:22-23",
+                "Deus é o nosso refúgio e fortaleza, socorro bem presente na angústia. - Salmos 46:1",
+                "O Senhor lutará por vocês; tão somente acalmem-se. - Êxodo 14:14",
+                "Bem-aventurado o homem que suporta a provação... receberá a coroa da vida. - Tiago 1:12",
+                "Porque para Deus nada é impossível. - Lucas 1:37",
+                "Consagre ao Senhor tudo o que você faz, e os seus planos serão bem-sucedidos. - Provérbios 16:3",
+                "O Senhor é o meu pastor, nada me faltará. - Salmos 23:1",
+                "Pois o Senhor, o seu Deus, os acompanhará e lutará por vocês. - Deuteronômio 20:4",
+                "Aquietai-vos, e sabei que eu sou Deus. - Salmos 46:10",
+                "O Senhor é o meu rochedo, o meu lugar forte e o meu libertador. - Salmos 18:2",
+                "Sede fortes e corajosos; não temais... pois o Senhor teu Deus é quem vai contigo. - Deuteronômio 31:6",
+                "Pois eu sou o Senhor, o seu Deus, que o segura pela mão direita e diz: Não tema; eu o ajudarei. - Isaías 41:13",
+                "Aquele que habita no esconderijo do Altíssimo, à sombra do Onipotente descansará. - Salmos 91:1",
+                "Sabemos que a tribulação produz a perseverança; a perseverança, um caráter aprovado; e o caráter aprovado, esperança. - Romanos 5:3-4",
+                "Toda a boa dádiva e todo o dom perfeito vem do alto, descendo do Pai. - Tiago 1:17",
+                "O Senhor te abençoe e te guarde; o Senhor faça resplandecer o seu rosto sobre ti. - Números 6:24-25",
+                "Em paz me deito e logo adormeço, pois só tu, Senhor, me fazes viver em segurança. - Salmos 4:8",
+                "O Senhor é a minha força e o meu escudo; nele o meu coração confia, e dele recebo ajuda. - Salmos 28:7",
+                "Combati o bom combate, acabei a carreira, guardei a fé. - 2 Timóteo 4:7",
+                "O Senhor é bom, um refúgio em tempos de angústia. Ele protege os que nele confiam. - Naum 1:7",
+                "Lâmpada para os meus pés é tua palavra, e luz para o meu caminho. - Salmos 119:105",
+                "Busquem, pois, em primeiro lugar o Reino de Deus e a sua justiça, e todas essas coisas serão acrescentadas a vocês. - Mateus 6:33",
+                "Pois a sua ira só dura um instante, mas o seu favor dura a vida toda. - Salmos 30:5"
+            ];
+
+            // FATURAR E IMPRIMIR
+            document.getElementById('faturarBtn').addEventListener('click', () => {
+                const quantidadeFrangos = parseInt(inputs.qtd.value) || 0;
+                if (quantidadeFrangos <= 0) return alert("Digite uma quantidade válida!");
+
+                const precoFrango = parseFloat(inputs.precoFrango.value);
+                const precoLinguica = parseFloat(inputs.precoLinguica.value);
+                
+                const linguicasGratis = quantidadeFrangos;
+                let quantidadeLinguicaAdicional = 0;
+                let totalLinguicaCobrar = 0;
+                let linguicasAdicionaisTexto = "";
+
+                if (checkboxes.linguica.checked) {
+                    const quantidadeLinguica = parseInt(inputs.qtdLinguica.value) || 0;
+                    quantidadeLinguicaAdicional = quantidadeLinguica;
+                    totalLinguicaCobrar = quantidadeLinguicaAdicional * precoLinguica;
+                    linguicasAdicionaisTexto = `${quantidadeLinguicaAdicional} linguiça(s) adicional(is) a R$ ${precoLinguica.toFixed(2)} cada. `;
+                }
+
+                const totalLinguicas = linguicasGratis + quantidadeLinguicaAdicional;
+                const total = (quantidadeFrangos * precoFrango) + totalLinguicaCobrar;
+
+                // Atualizar Caixa
+                dadosCaixa.estoque -= quantidadeFrangos;
+                dadosCaixa.vendidos += quantidadeFrangos;
+                dadosCaixa.faturamento += total;
+                atualizarDashboard();
+
+                // Sorteia um versículo da lista
+                const versiculoSorteado = versiculos[Math.floor(Math.random() * versiculos.length)];
+
+                // Montar o Recibo
+                let reciboText = `<strong>Estação do Frango</strong><br>Bom Almoço!<br>`;
+                
+                if (checkboxes.reserva.checked && inputs.nomeReserva.value) {
+                    reciboText += `Reservado para: ${inputs.nomeReserva.value}<br>`;
+                }
+
+                reciboText += `${quantidadeFrangos} Frango Assado<br>`;
+                reciboText += `ㅤㅤㅤ${totalLinguicas} linguiça ㅤㅤㅤㅤㅤㅤㅤㅤ${quantidadeFrangos} saquinho de farofa<br>`;
+                if (quantidadeLinguicaAdicional > 0) {
+                    reciboText += linguicasAdicionaisTexto + `<br>`;
+                }
+                
+                reciboText += `Data: ${new Date().toLocaleDateString()}<br>`;
+                
+                // MENSAGEM BÍBLICA: Configurada com cor preta absoluta (#000), negrito (bold) e tamanho um pouco maior para a impressora térmica.
+                reciboText += `<div style="margin-top: 15px; font-size: 0.85em; font-style: italic; font-weight: bold; color: #000; padding: 0 10px;">"${versiculoSorteado}"</div>`;
 
                 reciboContent.innerHTML = reciboText;
                 reciboValor.innerText = `Total a pagar: R$ ${total.toFixed(2)}`;
 
                 // Exibir e Imprimir
                 recibo.style.display = 'block';
-                    
+
                 // Limpeza Instantânea do Formulário
                 inputs.qtd.value = 1;
                 inputs.qtdLinguica.value = 0;
@@ -537,5 +707,6 @@
             });
         });
     </script>
+
 </body>
 </html>
